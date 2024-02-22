@@ -849,6 +849,7 @@ MonoBehaviour:
   jumpForce: 600
   dashSpeed: 20
   dashDuration: 0.25
+  fastFallFactor: 2.5
   groundDetection: {fileID: 2137687745}
   rb: {fileID: 0}
 --- !u!1 &1818652951

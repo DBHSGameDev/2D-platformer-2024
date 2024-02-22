@@ -32,6 +32,7 @@ public class GroundDetection : MonoBehaviour
                 {
                     other.SendMessage("LandedOn", SendMessageOptions.DontRequireReceiver);
                 }
+                PlayerController.instance.OnLanded();
             }
             onGround = true;
         }

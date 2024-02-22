@@ -11,15 +11,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float jumpForce;
     [SerializeField] float dashSpeed;
     [SerializeField] float dashDuration;
+    // the factor multiplied to gravity scale for player releasing the jump button
+    [SerializeField, Range(1,10)] float fastFallFactor; 
     [SerializeField] GroundDetection groundDetection; // GroundDetection component
 
-    public Rigidbody2D rb;
+    [NonSerialized] public Rigidbody2D rb;
 
     bool jumpPressed = false;
 
     bool canDash = false;
     bool dashing = false;
     Vector2 dashDirection;
+
+    bool fastFall = false;
 
     public event Action VelocityModifiers; // actions (methods) run to modify the velocity every physic frame
 
@@ -85,6 +89,10 @@ public class PlayerController : MonoBehaviour
         {
             canDash = true;
         }
+        else if (Input.GetAxisRaw("Jump") == 0)
+        {
+            SetFastFall(true);
+        }
 
         VelocityModifiers?.Invoke();
     }
@@ -94,9 +102,30 @@ public class PlayerController : MonoBehaviour
         rb.AddForce(new Vector2(0, jumpForce));
     }
 
+    // message from GroundDetection
+    public void OnLanded()
+    {
+        SetFastFall(false);
+    }
+
     // allow for clear the event from external sources
     public void ClearVelocityModifiers()
     {
         VelocityModifiers = null;
+    }
+
+    // set the fast fall field and modify gravity scale
+    void SetFastFall(bool value)
+    {
+        if (value == fastFall) return;
+        fastFall = value;
+        if (fastFall)
+        {
+            rb.gravityScale *= fastFallFactor;
+        }
+        else
+        {
+            rb.gravityScale /= fastFallFactor;
+        }
     }
 }
