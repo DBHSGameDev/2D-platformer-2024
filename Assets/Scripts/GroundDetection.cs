@@ -7,22 +7,24 @@ public class GroundDetection : MonoBehaviour
 {
     public bool onGround;
 
-    PlayerController player;
-    new BoxCollider2D collider;
+    new BoxCollider2D collider; // hidden deprecated member collider
 
     // Start is called before the first frame update
     void Start()
     {
-        player = GetComponent<PlayerController>();
         collider = GetComponent<BoxCollider2D>();
     }
 
+    // FixedUpdate is a frame-rate independent message called once before every physic calculation
     void FixedUpdate()
     {
         List<Collider2D> results = new();
+
         ContactFilter2D filter = new();
         filter.SetLayerMask(LayerMask.GetMask("ground"));
+
         collider.OverlapCollider(filter, results);
+
         if (results.Count != 0)
         {
             if (!onGround) {

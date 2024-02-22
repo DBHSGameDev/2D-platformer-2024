@@ -5,21 +5,23 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public static PlayerController instance;
+    public static PlayerController instance; // for easy reference from other gameObjects
 
     [SerializeField] float speed;
     [SerializeField] float jumpForce;
     [SerializeField] float dashSpeed;
     [SerializeField] float dashDuration;
-    [SerializeField] GroundDetection groundDetection;
+    [SerializeField] GroundDetection groundDetection; // GroundDetection component
 
     public Rigidbody2D rb;
+
     bool jumpPressed = false;
+
     bool canDash = false;
     bool dashing = false;
     Vector2 dashDirection;
 
-    public event Action VelocityModifiers;
+    public event Action VelocityModifiers; // actions (methods) run to modify the velocity every physic frame
 
     // Start is called before the first frame update
     void Start()
@@ -31,12 +33,12 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // 2D direction
         Vector2 direction = new(
             Input.GetAxisRaw("Horizontal"),
             Input.GetAxisRaw("Vertical"));
 
         float moveVelocity = direction.x * speed;
-
         rb.velocity = new(moveVelocity, rb.velocity.y);
 
         float jumpAxis = Input.GetAxisRaw("Jump");
@@ -64,6 +66,7 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(DashTimer());
     }
 
+    // reset dashing and velocity
     IEnumerator DashTimer()
     {
         yield return new WaitForSeconds(dashDuration);
@@ -71,6 +74,7 @@ public class PlayerController : MonoBehaviour
         dashing = false;
     }
 
+    // FixedUpdate is a frame-rate independent message called once before every physic calculation
     private void FixedUpdate()
     {
         if (dashing)
@@ -90,6 +94,7 @@ public class PlayerController : MonoBehaviour
         rb.AddForce(new Vector2(0, jumpForce));
     }
 
+    // allow for clear the event from external sources
     public void ClearVelocityModifiers()
     {
         VelocityModifiers = null;
